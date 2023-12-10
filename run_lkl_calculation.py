@@ -132,6 +132,7 @@ def main():
     parser.add_argument("--branch_lengths_path", type=str, default="data/branchlength.dat", help="Path to the branch lengths file.")
     parser.add_argument("--msa_path", type=str, default="data/msa.dat", help="Path to the multiple sequence alignment file.")
     parser.add_argument("--mu", type=float, default=1, help="Value of mu (optional).")
+    parser.add_argument("--output_lkl_root_node_only", action="store_true", help="Output likelihood of root node only.")
 
     args = parser.parse_args()
 
@@ -139,6 +140,7 @@ def main():
     branch_lengths_path = args.branch_lengths_path
     msa_path = args.msa_path
     mu = args.mu
+    output_lkl_root_node_only = args.output_lkl_root_node_only
 
     Q = np.array([[-3 * mu, mu, mu, mu], [mu, -3 * mu, mu, mu], [mu, mu, -3 * mu, mu], [mu, mu, mu, -3 * mu]])
 
@@ -155,12 +157,20 @@ def main():
     for root_node in node_dict.values():
         calculate_lkl_recursively(root_node, Q, lkl_dict)
 
-    for node in lkl_dict:
+    if output_lkl_root_node_only:
         npmm_sum=0
-        for pos_list in lkl_dict[node]:
+        root_name, root_value = list(lkl_dict.items())[-1]
+        for pos_list in root_value:
             npmm=np.matmul(pos_list,[0.25,0.25,0.25,0.25])
             npmm_sum+=math.log(npmm)
-        print("Node ",node,"npmm: ",npmm_sum)
+        print(round(npmm_sum,4))
+    else:
+        for node in lkl_dict:
+            npmm_sum=0
+            for pos_list in lkl_dict[node]:
+                npmm=np.matmul(pos_list,[0.25,0.25,0.25,0.25])
+                npmm_sum+=math.log(npmm)
+            print("Node ",node,"npmm: ",npmm_sum)
 
 if __name__ == "__main__":
     main()

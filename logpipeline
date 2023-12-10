@@ -1,0 +1,17 @@
+# get lkl for all nodes
+python3 run_lkl_calculation.py \
+    --tree_path data/table.dat \
+    --branch_lengths_path data/branchlength.dat \
+    --msa_path data/msa.dat \
+    --mu 1
+# get lkl for root node only
+python3 run_lkl_calculation.py \
+    --tree_path data/table.dat \
+    --branch_lengths_path data/branchlength.dat \
+    --msa_path data/msa.dat \
+    --mu 1 \
+    --output_lkl_root_node_only
+
+# test datasets
+pip install tabulate
+python3 test.py
