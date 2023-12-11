@@ -12,7 +12,6 @@ class TreeNode:
         self.branch_length = None
         self.lkl_list = None
         self.name = node_name
-        self.type = None ## is it the external node or internal node
 
     def __len__(self):
         return len(self.seq_leaf)
@@ -36,7 +35,8 @@ class TreeNode:
         else:
             self.lkl_list = None
 
-def add_nodes_recursively(node, parent, node_dict, bl=None, seq_for_leaves=None, type=None, lkl_list=None):
+def add_nodes_recursively(node, parent, node_dict, bl=None, 
+                          sequence=None, lkl_list=None):
     if node not in node_dict:
         new_node = TreeNode(node)
         node_dict[node] = new_node
@@ -49,8 +49,7 @@ def add_nodes_recursively(node, parent, node_dict, bl=None, seq_for_leaves=None,
         node_dict[parent].children.append(node_dict[node])
         node_dict[node].parent = node_dict[parent]
         node_dict[node].branch_length = bl
-        node_dict[node].type = type
-        node_dict[node].seq_leaf = seq_for_leaves
+        node_dict[node].seq_leaf = sequence
         node_dict[node].lkl_list = []
         node_dict[node].initialize_lkl_list()
 
@@ -59,10 +58,10 @@ def read_input_files(tree_path, branch_lengths_path, msa_path):
     with open(tree_path, "r") as tree_file, open(branch_lengths_path, "r") as BL_file, open(msa_path, "r") as msa_file:
         line_num = 0
         bl = BL_file.readline().split(",")
-        seq_for_leaves = {}
+        sequence = {}
         for line in msa_file:
             key, val = line.split()
-            seq_for_leaves[key] = val
+            sequence[key] = val
         
         # Dictionary to store references to nodes by their names
         node_dict = {}
@@ -73,19 +72,16 @@ def read_input_files(tree_path, branch_lengths_path, msa_path):
             node_name = tmp_list[1].rstrip()
             branch_len = bl[line_num]
 
-            if node_name in seq_for_leaves.keys():
-                leaf_seq = seq_for_leaves[node_name]
-                node_type = "external"
+            if node_name in sequence.keys():
+                leaf_seq = sequence[node_name]
             else:
                 leaf_seq = None
-                node_type = "internal"
 
             add_nodes_recursively(node=node_name,
                                   parent=parent_node_name,
                                   node_dict=node_dict,
                                   bl=float(branch_len),
-                                  seq_for_leaves=leaf_seq,
-                                  type=node_type)
+                                  sequence=leaf_seq)
 
             line_num += 1
 
