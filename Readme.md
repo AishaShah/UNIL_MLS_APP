@@ -1,4 +1,4 @@
-# LKL Calculation Python Code
+# Python Code for calculating liklihood of observed MSA given a phylogenetic tree
 
 This repository contains Python code for calculating likelihood (lkl) for phylogenetic trees. The code includes two main functionalities:
 
