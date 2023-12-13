@@ -27,7 +27,7 @@ results = []
 # Loop through each dataset
 for dataset in datasets:
     msa_path, branch_lengths_path, tree_path, branch_len, mu, expected_output = dataset
-    print(f"Testing for dataset: {msa_path}")
+    print(f"Testing for dataset: {msa_path} (mu={mu})")
     
     # Construct the command to run the code
     command = [
